@@ -13,14 +13,13 @@ try:
     conn = st.connection("snowflake")
     session = conn.session()
 
-    # ✅ Fetch BOTH columns
+    # ✅ Fetch data
     df = session.sql(
         "SELECT FRUIT_NAME, SEARCH_ON FROM SMOOTHIES.PUBLIC.FRUIT_OPTIONS"
     ).to_pandas()
 
-    # mapping dictionary
+    # mapping
     fruit_map = dict(zip(df["FRUIT_NAME"], df["SEARCH_ON"]))
-
     fruit_list = df["FRUIT_NAME"].tolist()
 
     # ✅ Multiselect
@@ -35,22 +34,23 @@ try:
 
         st.subheader("🍎 Nutrition Info")
 
-for fruit in ingredients_list:
-    clean_fruit = fruit_map.get(fruit)
+        # ✅ FIX: for loop inside if
+        for fruit in ingredients_list:
+            clean_fruit = fruit_map.get(fruit)
 
-    if not clean_fruit:
-        st.warning(f"⚠️ No data available for {fruit}")
-        continue
+            if not clean_fruit:
+                st.warning(f"⚠️ No data available for {fruit}")
+                continue
 
-    try:
-        response = requests.get(f"https://fruityvice.com/api/fruit/{clean_fruit}")
-        response.raise_for_status()
+            try:
+                response = requests.get(f"https://fruityvice.com/api/fruit/{clean_fruit}")
+                response.raise_for_status()
 
-        st.markdown(f"### 🍓 {fruit}")
-        st.json(response.json())
+                st.markdown(f"### 🍓 {fruit}")
+                st.json(response.json())
 
-    except:
-        st.error(f"API failed for {fruit}")
+            except:
+                st.error(f"API failed for {fruit}")
 
         # ✅ Insert
         if st.button('Submit Order'):
