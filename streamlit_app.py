@@ -13,17 +13,16 @@ try:
     # ✅ Correct connection
     conn = st.connection("snowflake")
     session = conn.session()
-    conn = st.connection("snowflake")
-st.success("Connected ho gaya bhai ✅")
 
-    # ✅ Correct query + pandas conversion
+    st.success("Connected ho gaya bhai ✅")
+
+    # ✅ Query
     my_dataframe = session.sql(
         "SELECT FRUIT_NAME FROM SMOOTHIES.PUBLIC.FRUIT_OPTIONS"
     ).to_pandas()
 
     fruit_list = my_dataframe["FRUIT_NAME"].tolist()
 
-    # ✅ Multiselect fix
     ingredients_list = st.multiselect(
         'Choose up to 5 ingredients:',
         fruit_list,
@@ -38,14 +37,12 @@ st.success("Connected ho gaya bhai ✅")
                 response = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}")
                 response.raise_for_status()
 
-                data = response.json()
                 st.write(f"### {fruit_chosen} details")
-                st.json(data)
+                st.json(response.json())
 
             except Exception as e:
                 st.error(f"API error for {fruit_chosen}: {e}")
 
-        # ✅ Insert query
         if st.button('Submit Order'):
             if name_on_order:
                 insert_sql = f"""
