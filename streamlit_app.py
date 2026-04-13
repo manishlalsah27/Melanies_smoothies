@@ -2,6 +2,9 @@
 import streamlit as st
 import requests
 from snowflake.snowpark.functions import col
+from snowflake.snowpark.context import get_active_session
+
+
 
 # Write directly to the app
 st.title("Customize Your Smoothie :cup_with_straw:")
@@ -16,9 +19,10 @@ name_on_order = st.text_input("Name on Smoothie")
 st.write("The name on your smoothie will be: ", name_on_order)
 
 try:
-    # Establish connection to Snowflake (assuming st.connection is correctly defined)
-    cnx = st.connection("snowflake")
-    session = cnx.session()
+   # # Establish connection to Snowflake (assuming st.connection is correctly defined)
+   # cnx = st.connection("snowflake")
+   # session = cnx.session()
+    session = get_active_session()
 
     # Retrieve fruit options from Snowflake
     my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
