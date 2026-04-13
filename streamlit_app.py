@@ -1,5 +1,13 @@
 import streamlit as st
+import requests
 from snowflake.snowpark.functions import col
+
+response = requests.get("https://my.smoothiefroot.com/api/fruit/watermelon")
+
+if response.status_code == 200:
+    st.json(response.json())
+else:
+    st.error(f"Error: {response.status_code}")
 
 st.title(":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
 st.write("Choose the fruits you want in your smoothie!")
