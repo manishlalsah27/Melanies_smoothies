@@ -35,20 +35,22 @@ try:
 
         st.subheader("🍎 Nutrition Info")
 
-        for fruit in ingredients_list:
-            try:
-                clean_fruit = fruit_map.get(fruit)
+for fruit in ingredients_list:
+    clean_fruit = fruit_map.get(fruit)
 
-                response = requests.get(
-                    f"https://fruityvice.com/api/fruit/{clean_fruit}"
-                )
-                response.raise_for_status()
+    if not clean_fruit:
+        st.warning(f"⚠️ No data available for {fruit}")
+        continue
 
-                st.write(f"### {fruit}")
-                st.json(response.json())
+    try:
+        response = requests.get(f"https://fruityvice.com/api/fruit/{clean_fruit}")
+        response.raise_for_status()
 
-            except Exception as e:
-                st.warning(f"No data for {fruit}")
+        st.markdown(f"### 🍓 {fruit}")
+        st.json(response.json())
+
+    except:
+        st.error(f"API failed for {fruit}")
 
         # ✅ Insert
         if st.button('Submit Order'):
