@@ -3,6 +3,9 @@ import requests
 from snowflake.snowpark.functions import col
 
 
+conn = st.connection("snowflake")
+st.success("Connected ho gaya bhai ✅")
+
 
 st.title("Customize Your Smoothie :cup_with_straw:")
 st.write("Choose the fruits you want in your custom Smoothie!")
