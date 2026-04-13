@@ -1,28 +1,26 @@
 import streamlit as st
-import requests
 from snowflake.snowpark.functions import col
 
-st.title("Customize Your Smoothie :cup_with_straw:")
-st.write("Choose the fruits you want in your custom Smoothie!")
+st.title(":cup_with_straw: Customize Your Smoothie :cup_with_straw:")
+st.write("Choose the fruits you want in your smoothie!")
 
 # Input
-name_on_order = st.text_input("Name on Smoothie")
-st.write("The name on your smoothie will be:", name_on_order)
+Name_on_order = st.text_input("Name of the smoothie:")
+st.write("The name of the smoothie will be:", Name_on_order)
 
 try:
-    # ✅ Correct connection
+    # ✅ Cloud connection
     conn = st.connection("snowflake")
     session = conn.session()
 
-    st.success("Connected ho gaya bhai ✅")
-
-    # ✅ Query
+    # ✅ Load data (convert to pandas)
     my_dataframe = session.sql(
         "SELECT FRUIT_NAME FROM SMOOTHIES.PUBLIC.FRUIT_OPTIONS"
     ).to_pandas()
 
     fruit_list = my_dataframe["FRUIT_NAME"].tolist()
 
+    # ✅ Multiselect
     ingredients_list = st.multiselect(
         'Choose up to 5 ingredients:',
         fruit_list,
@@ -32,28 +30,17 @@ try:
     if ingredients_list:
         ingredients_string = ' '.join(ingredients_list)
 
-        for fruit_chosen in ingredients_list:
-            try:
-                response = requests.get(f"https://fruityvice.com/api/fruit/{fruit_chosen}")
-                response.raise_for_status()
-
-                st.write(f"### {fruit_chosen} details")
-                st.json(response.json())
-
-            except Exception as e:
-                st.error(f"API error for {fruit_chosen}: {e}")
-
-        if st.button('Submit Order'):
-            if name_on_order:
+        if st.button('Submit order'):
+            if Name_on_order:
                 insert_sql = f"""
                     INSERT INTO SMOOTHIES.PUBLIC.ORDERS (INGREDIENTS, NAME_ON_ORDER)
-                    VALUES ('{ingredients_string}', '{name_on_order}')
+                    VALUES ('{ingredients_string}', '{Name_on_order}')
                 """
 
                 session.sql(insert_sql).collect()
-                st.success(f'Your Smoothie is ordered, {name_on_order}! ✅')
+                st.success(f'Your Smoothie is ordered, {Name_on_order}! ✅')
             else:
-                st.warning("Please enter a name before ordering")
+                st.warning("Please enter name")
 
-except Exception as ex:
-    st.error(f"Error: {str(ex)}")
+except Exception as e:
+    st.error(f"Error: {e}")
