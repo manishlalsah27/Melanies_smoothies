@@ -20,8 +20,12 @@ st.write("The name on your smoothie will be: ", name_on_order)
 
 try:
    # # Establish connection to Snowflake (assuming st.connection is correctly defined)
-   cnx = st.connection("snowflake")
-   session = cnx.session()
+conn = st.connection("snowflake")
+session = conn.session()
+
+df = session.sql("SELECT * FROM SMOOTHIES.PUBLIC.FRUIT_OPTIONS").to_pandas()
+
+st.dataframe(df)
  
     # Retrieve fruit options from Snowflake
     my_dataframe = session.table("smoothies.public.fruit_options").select(col("FRUIT_NAME"))
